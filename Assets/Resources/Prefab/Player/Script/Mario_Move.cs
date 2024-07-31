@@ -1,44 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
+using MarioCtrl;
 
 public class Mario_Move : MonoBehaviour
 {
-    private Rigidbody2D rb;
-    private float maxMoveSpeed;
-    private float moveForce;
-
-    void Start()
+    internal static void Move()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0;                // 중력 Off
-        maxMoveSpeed = 10f;
-        moveForce = 50f;
-    }
+        float moveInput = 0f;
 
-    void FixedUpdate()
-    {
-        Move();
-        VelocityLimit();
-    }
-
-    private void Move()
-    {
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            rb.AddForce(new Vector2(-moveForce, 0));
+            moveInput = -1f;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            rb.AddForce(new Vector2(moveForce, 0));
+            moveInput = 1f;
         }
+
+        Mario.rb.velocity = new Vector2(moveInput * Mario.maxMoveSpeed, Mario.rb.velocity.y);
     }
-    private void VelocityLimit()
+    internal static void VelocityLimit()
     {
-        if (rb.velocity.x > maxMoveSpeed)
-            rb.velocity = new Vector2(maxMoveSpeed, rb.velocity.y);
-        else if (rb.velocity.x < -maxMoveSpeed)
-            rb.velocity = new Vector2(-maxMoveSpeed, rb.velocity.y);
+        if (Mario.rb.velocity.x > Mario.maxMoveSpeed)
+            Mario.rb.velocity = new Vector2(Mario.maxMoveSpeed, Mario.rb.velocity.y);
+        else if (Mario.rb.velocity.x < -Mario.maxMoveSpeed)
+            Mario.rb.velocity = new Vector2(-Mario.maxMoveSpeed, Mario.rb.velocity.y);
     }
 }

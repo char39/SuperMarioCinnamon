@@ -122,32 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &58241106 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1388561026540318582, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-  m_PrefabInstance: {fileID: 1050563274528083476}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &58241116
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 58241106}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &86466111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1624,14 +1598,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mario_16
       objectReference: {fileID: 0}
-    - target: {fileID: 2132824502078325748, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_Mass
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2132824502078325748, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_LinearDrag
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2564490682518814008, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.23
@@ -1672,17 +1638,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5175289477612775572, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1388561026540318582, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 58241116}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
