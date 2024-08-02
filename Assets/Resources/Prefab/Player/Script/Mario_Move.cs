@@ -1,11 +1,11 @@
-using System.Collections;
+/* using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MarioCtrl;
 
 public class Mario_Move : MonoBehaviour
 {
-    internal static void Move()
+    internal static void FixedUpdate_Move(ref Rigidbody2D rb, float maxMoveSpeed)
     {
         float moveInput = 0f;
 
@@ -18,13 +18,14 @@ public class Mario_Move : MonoBehaviour
             moveInput = 1f;
         }
 
-        Mario.rb.velocity = new Vector2(moveInput * Mario.maxMoveSpeed, Mario.rb.velocity.y);
+        rb.velocity = new Vector2(moveInput * maxMoveSpeed, rb.velocity.y);
     }
-    internal static void VelocityLimit()
+    internal static void VelocityLimit(ref Rigidbody2D rb, float maxMoveSpeed)
     {
-        if (Mario.rb.velocity.x > Mario.maxMoveSpeed)
-            Mario.rb.velocity = new Vector2(Mario.maxMoveSpeed, Mario.rb.velocity.y);
-        else if (Mario.rb.velocity.x < -Mario.maxMoveSpeed)
-            Mario.rb.velocity = new Vector2(-Mario.maxMoveSpeed, Mario.rb.velocity.y);
+        if (rb.velocity.x > maxMoveSpeed)
+            rb.velocity = new Vector2(maxMoveSpeed, rb.velocity.y);
+        else if (rb.velocity.x < -maxMoveSpeed)
+            rb.velocity = new Vector2(-maxMoveSpeed, rb.velocity.y);
     }
 }
+ */
