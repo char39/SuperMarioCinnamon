@@ -42,6 +42,7 @@ namespace MarioCtrl
         public Mario(MarioVars marioVars) { vars = marioVars; }     // 생성자
 
         [Header("Vars Value [영향 X]")]              // 수치 바꿔도 전~~~혀 관계없음 [인스펙터 전용]
+        public Rigidbody2D rb;                          // [Mario.cs] 물리 효과
         public float fallSpeed;                         // [Mario_Gravity.cs] 현재 떨어지는 속도
         public bool isGroundEnter;                      // [Mario_Gravity.cs] 블록 충돌판정
         public int sideCollision;                       // [Mario_Gravity.cs] 옆 블록 충돌판정
@@ -79,7 +80,7 @@ namespace MarioCtrl
 
         private void StartComponents()                  // void Start() 컴포넌트 값 할당
         {
-            vars.rb = GetComponent<Rigidbody2D>();
+            vars.rb = this.gameObject.GetComponent<Rigidbody2D>();
             vars.tr = GetComponent<Transform>();
         }
         private void StartVars()                        // void Start() 변수 값 할당
@@ -88,7 +89,7 @@ namespace MarioCtrl
             vars.gravityMultiValue = 3.0f;
             vars.jumpForce = 17f;
             vars.maxMoveSpeed = 9f;
-            vars.moveForce = 50f;
+            vars.moveForce = 5f;
             vars.isGroundEnter = false;
             vars.isSideCollision = false;
             vars.sideCollision = 0;                     // 0: 미충돌, -1: 왼쪽, 1: 오른쪽
@@ -99,7 +100,7 @@ namespace MarioCtrl
         }
         private void StartMethod()                      // void Start() 에 메서드를 1회 호출
         {
-            startmariogravity();
+            StartRigidBody();
         }
 
         private void FixedUpdateComponents()            // void FixedUpdate() 컴포넌트 값 할당
@@ -112,7 +113,7 @@ namespace MarioCtrl
         }
         private void FixedUpdateMethod()                // void FixedUpdate() 에 메서드를 1회 호출
         {
-            fixedupdatemove();
+
         }
 
         private void UpdateComponents()                 // void Update() 컴포넌트 값 할당
@@ -121,14 +122,18 @@ namespace MarioCtrl
         }
         private void UpdateVars()                       // void Update() 변수 값 할당
         {
-
+            rb = vars.rb;
+            fallSpeed = vars.maxFallSpeed;
+            isGroundEnter = vars.isGroundEnter;
+            sideCollision = vars.sideCollision;
+            isSideCollision = vars.isSideCollision;
+            isJump = vars.isJump;
+            moveInput = vars.moveInput;
+            moveSpeed = vars.maxMoveSpeed;
         }
         private void UpdateMethod()                     // void Update() 에 메서드를 1회 호출
         {
-            updateMaxfallspeed();
-            updateJump();
-            velocitylimit();
-
+            asdf();
         }
 
         private void LateUpdateComponents()             // void LateUpdate() 컴포넌트 값 할당
@@ -137,217 +142,110 @@ namespace MarioCtrl
         }
         private void LateUpdateVars()                   // void LateUpdate() 변수 값 할당
         {
-            isGroundEnter = vars.isGroundEnter;
-            isSideCollision = vars.isSideCollision;
-            sideCollision = vars.sideCollision;
-            isJump = vars.isJump;
-            fallSpeed = vars.rb.velocity.y;
-            moveInput = vars.moveInput;
-            moveSpeed = vars.rb.velocity.x;
+
         }
         private void LateUpdateMethod()                 // void LateUpdate() 에 메서드를 1회 호출
         {
 
         }
 
-        /* void OnCollisionEnter2D(Collision2D col)
+        public void StartRigidBody()                        // RigidBody 초기화
         {
-            if ((vars.groundLayer.value & (1 << col.gameObject.layer)) > 0)
-            {
-                foreach (ContactPoint2D contact in col.contacts)
-                {
-                    if (Mathf.Abs(contact.normal.x) > 0.5f) // 옆부분에 닿았나
-                    {
-                        if (contact.normal.y > 0.5f ) // 윗부분에 닿았는지 확인
-                        {
-                            isGroundTouch = //Mario_Gravity.GroundTouchEnter(ref vars.isGroundTouch, ref vars.isJump);
-                            break;
-                        }
-                    }
-                    else if (contact.normal.y > 0.5f ) // 윗부분에 닿았나
-                    {
-                        isGroundTouch = //Mario_Gravity.GroundTouchEnter(ref vars.isGroundTouch, ref vars.isJump);
-                        break;
-                    }
-                }
-            }
+            vars.rb.bodyType = RigidbodyType2D.Dynamic;    // 물리 효과
+            vars.rb.useAutoMass = false;    // 질량 자동 계산
+            vars.rb.mass = 1.0f;    // 질량
+            vars.rb.drag = 0.0f;    // 공기 저항
+            vars.rb.angularDrag = 0.05f;    // 회전 저항
+            vars.rb.gravityScale = 3.0f;    // 중력 적용
+            vars.rb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;    // 회전 제한
+            vars.rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;    // 충돌 감지
+            vars.rb.sleepMode = RigidbodySleepMode2D.StartAwake;    // 시작시 깨어있음
+            vars.rb.interpolation = RigidbodyInterpolation2D.Interpolate;    // 보간
+
+            vars.rb.velocity = Vector2.zero;    // 초기 속도 초기화
         }
 
-        void OnCollisionStay2D(Collision2D col)
+        public void asdf()
         {
-            if ((vars.groundLayer.value & (1 << col.gameObject.layer)) > 0)
-            {
-                foreach (ContactPoint2D contact in col.contacts)
-                {
-                    if (Mathf.Abs(contact.normal.x) > 0.5f) // 옆부분에 닿았나
-                    {
-                        if (contact.normal.y > 0.5f ) // 윗부분에 닿았는지 확인
-                        {
-                            isGroundTouch = //Mario_Gravity.GroundTouchEnter(ref vars.isGroundTouch, ref vars.isJump);
-                            break;
-                        }
-                    }
-                    else if (contact.normal.y > 0.5f ) // 윗부분에 닿았나
-                    {
-                        isGroundTouch = //Mario_Gravity.GroundTouchEnter(ref vars.isGroundTouch, ref vars.isJump);
-                        break;
-                    }
-                }
-            }
-        }
-
-        void OnCollisionExit2D(Collision2D col)
-        {
-            if ((vars.groundLayer.value & (1 << col.gameObject.layer)) > 0)
-            {
-                isGroundTouch = //Mario_Gravity.GroundTouchExit(ref vars.isGroundTouch);
-            }
-        } */
- 
-
-        void startmariogravity()
-        {
-            vars.rb.gravityScale = 3.0f;                // 중력을 velocity로 사용
-            vars.rb.velocity = Vector2.zero;            // velocity 초기화
-            vars.rb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation; // 회전 제한
-        }
-        void updateMaxfallspeed()
-        {
-            //fallSpeed = vars.rb.velocity.y;         // 인스펙터용
-            if (vars.rb.velocity.y < vars.maxFallSpeed) // 종단속도보다 빠르면
-                vars.rb.velocity = new Vector2(vars.rb.velocity.x, vars.maxFallSpeed);  // 종단속도로 제한
-        }
-
-        void updateJump()
-        {
-            if (Input.GetKeyDown(KeyCode.Z) && !vars.isJump) // 점프키 누르고 점프중이 아니고 땅에 닿았을 때
-            {
-                vars.rb.velocity = new Vector2(0, vars.jumpForce); // 점프
-                vars.isJump = true; // 점프중
-                vars.isGroundEnter = false; // 땅에서 떨어짐
-            }
-        }
-
-        void fixedupdatemove()
-        {
-            float targetMoveInput = 0f;
-
+            // 왼쪽 화살표를 누르고 있는 경우
             if (Input.GetKey(KeyCode.LeftArrow))
-                targetMoveInput = -1f;
-            else if (Input.GetKey(KeyCode.RightArrow))
-                targetMoveInput = 1f;
-            
-
-            // 부드러운 움직임을 위해 moveInput을 점진적으로 변경
-            if (vars.moveInput >= 0)
             {
-                vars.moveInput = Mathf.Lerp(vars.moveInput, targetMoveInput, vars.acceleration * Time.fixedDeltaTime); // 가속
+                // 물체의 속도를 왼쪽으로 설정합니다.
+                vars.rb.velocity = new Vector2(-moveSpeed, vars.rb.velocity.y);
+
+                // scale 값을 이용해 캐릭터가 이동 방향을 바라보게 합니다.
+                transform.localScale = new Vector3(-1f, 1f, 1f);
             }
-            else if (vars.moveInput < 0)
+            else if (Input.GetKey(KeyCode.RightArrow)) // 오른쪽 화살표를 누르고 있는 경우
             {
-                vars.moveInput = Mathf.Lerp(vars.moveInput, targetMoveInput, vars.acceleration * Time.fixedDeltaTime); // 가속
+                // 물체의 속도를 오른쪽으로 설정합니다.
+                vars.rb.velocity = new Vector2(moveSpeed, vars.rb.velocity.y);
+                transform.localScale = new Vector3(1f, 1f, 1f);
             }
-
-            // 방향 전환 시 즉시 속도를 0으로 설정하지 않음
-            if (Mathf.Sign(vars.moveInput) != Mathf.Sign(targetMoveInput) && targetMoveInput != 0) // 방향 전환 시
+            else if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow)) // 이동 키를 뗀 경우
             {
-                vars.moveInput = Mathf.Lerp(vars.moveInput, 0, vars.deceleration * Time.fixedDeltaTime); // 감속
+                // x 속도를 줄여 이동 방향으로 아주 살짝만 움직이고 거의 바로 멈추게 합니다.
+                vars.rb.velocity = new Vector2(0, vars.rb.velocity.y);
             }
-            
-            
 
-            string roundedMoveInputStr = vars.moveInput.ToString("F2"); // 소수점 이하 2자리까지만 남기고 나머지 제거
-            float roundMoveInput = float.Parse(roundedMoveInputStr);
-            Vector3 moveVelocity = new Vector3(roundMoveInput * vars.maxMoveSpeed, 0, 0);
-            vars.tr.position += moveVelocity * Time.deltaTime;
-
-            
-
-            if (vars.isGroundEnter)
-                vars.rb.gravityScale = 0.0f;
-            else if (!vars.isGroundEnter)
-                vars.rb.gravityScale = 3.0f;
+            // 스페이스바를 누르면 점프합니다.
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (IsGrounded())
+                    vars.rb.velocity = new Vector2(vars.rb.velocity.x, vars.jumpForce);
+            }
         }
-        void velocitylimit()
+
+        public bool IsGrounded()
         {
-            if (vars.rb.velocity.x > vars.maxMoveSpeed)
-                vars.rb.velocity = new Vector2(vars.maxMoveSpeed, vars.rb.velocity.y);
-            else if (vars.rb.velocity.x < -vars.maxMoveSpeed)
-                vars.rb.velocity = new Vector2(-vars.maxMoveSpeed, vars.rb.velocity.y);
+            // 캐릭터를 중심으로 아래 방향으로 ray 를 쏘아 그 곳에 Layer 타입이 Ground 인 객체가 있는지 검사합니다.
+            var ray = Physics2D.Raycast(transform.position, Vector2.down, 1f, 1 << LayerMask.NameToLayer("Ground"));
+            return ray.collider != null;
         }
 
-        IEnumerator OnCollisionStay2D(Collision2D col)
-        {
-            if (this.gameObject == null) yield break;       // 유효성 검사
-            if ((vars.sideGroundLayer.value & (1 << col.gameObject.layer)) > 0)     // 옆 블록 충돌 판정
-            {
-                while (!vars.isSideCollision)
-                {
-                    foreach (ContactPoint2D contact in col.contacts)
-                    {
-                        if (Mathf.Abs(contact.normal.x) > 0.5f) // 옆부분에 닿았나
-                        {
-                            vars.isSideCollision = true;
-                            vars.sideCollision = contact.normal.x > 0 ? 1 : -1;
-                            break;
-                        }
-                        yield return null;
-                    }
-                    yield return new WaitForSeconds(0.05f);
-                }
-            }
-            if ((vars.groundLayer.value & (1 << col.gameObject.layer)) > 0)
-            {
-                StartCoroutine(groundTouch(col));
-            }
-        }
-        IEnumerator groundTouch(Collision2D col)        // 땅 충돌 판정
-        {
-            while (!vars.isGroundEnter)
-            {
-                foreach (ContactPoint2D contact in col.contacts)
-                {
-                    if (Mathf.Abs(contact.normal.x) > 0.5f) // 옆부분에 닿았나
-                    {
-                        if (contact.normal.y > 0.5f && vars.rb.velocity.y == 0) // 윗부분에 닿았는지 확인
-                        {
-                            vars.isGroundEnter = true;
-                            vars.isJump = false;
-                            break;
-                        }
-                    }
-                    else if (contact.normal.y > 0.5f && vars.rb.velocity.y == 0) // 윗부분에 닿았나
-                    {
-                        vars.isGroundEnter = true;
-                        vars.isJump = false;
-                        break;
-                    }
-                    yield return null;
-                }
-                yield return new WaitForSeconds(0.05f);
-            }
-        }
 
-        IEnumerator OnCollisionExit2D(Collision2D col)
-        {
-            if (this.gameObject == null) yield break;       // 유효성 검사
-            if ((vars.sideGroundLayer.value & (1 << col.gameObject.layer)) > 0)     // 옆 블록에서 떨어질 때
-            {
-                while (vars.isSideCollision)
-                {
-                    vars.isSideCollision = false;
-                    yield return new WaitForSeconds(0.1f);
-                }
-            }
-            if ((vars.groundLayer.value & (1 << col.gameObject.layer)) > 0)     // 땅에서 떨어질 때
-            {
-                while (vars.isGroundEnter)
-                {
-                    vars.isGroundEnter = false;
-                    vars.isJump = true;
-                    yield return new WaitForSeconds(0.1f);
-                }
-            }
-        }
     }
 }
+
+
+
+/* public void asdf()
+        {
+            // 왼쪽 화살표를 누르고 있는 경우
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                // 물체에 왼쪽 방향으로 물리적 힘을 가해줍니다. 즉, 왼쪽으로 이동 시킵니다.
+                vars.rb.AddForce(Vector2.left * moveSpeed, ForceMode2D.Impulse);
+
+                // velocity 는 물체의 속도입니다. 일정 속도에 도달하면 더 이상 빨라지지 않게합니다.
+                vars.rb.velocity = new Vector2(Mathf.Max(vars.rb.velocity.x, -vars.maxMoveSpeed), vars.rb.velocity.y);
+
+                // scale 값을 이용해 캐릭터가 이동 방향을 바라보게 합니다.
+                transform.localScale = new Vector3(-1f, 1f, 1f);
+            }
+            else if (Input.GetKey(KeyCode.RightArrow)) // 오른쪽 화살표를 누르고 있는 경우
+            {
+                vars.rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Impulse);
+                vars.rb.velocity = new Vector2(Mathf.Min(vars.rb.velocity.x, vars.maxMoveSpeed), vars.rb.velocity.y);
+                transform.localScale = new Vector3(1f, 1f, 1f);
+            }
+            else if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow)) // 이동 키를 뗀 경우
+            {
+                // x 속도를 줄여 이동 방향으로 아주 살짝만 움직이고 거의 바로 멈추게 합니다.
+                vars.rb.velocity = new Vector3(vars.rb.velocity.normalized.x, vars.rb.velocity.y);
+            }
+
+            // 스페이스바를 누르면 점프합니다.
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (IsGrounded())
+                    vars.rb.AddForce(Vector2.up * vars.jumpForce, ForceMode2D.Impulse);
+            }
+        }
+
+        public bool IsGrounded()
+        {
+            // 캐릭터를 중심으로 아래 방향으로 ray 를 쏘아 그 곳에 Layer 타입이 Ground 인 객체가 있는지 검사합니다.
+            var ray = Physics2D.Raycast(transform.position, Vector2.down, 1f, 1 << LayerMask.NameToLayer("Ground"));
+            return ray.collider != null;
+        } */

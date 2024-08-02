@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 6300547923316606100}
   m_Layer: 0
   m_Name: Mario_16
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -220,8 +220,16 @@ MonoBehaviour:
     groundLayer:
       serializedVersion: 2
       m_Bits: 1024
+    sideGroundLayer:
+      serializedVersion: 2
+      m_Bits: 512
+    backGroundLayer:
+      serializedVersion: 2
+      m_Bits: 256
   fallSpeed: 0
   isGroundEnter: 0
+  sideCollision: 0
+  isSideCollision: 0
   isJump: 0
   moveInput: 0
   moveSpeed: 0
