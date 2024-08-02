@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vars:
-    groundLayer:
+    usedGroundLayer:
       serializedVersion: 2
       m_Bits: 1024
     sideGroundLayer:
@@ -226,6 +226,7 @@ MonoBehaviour:
     backGroundLayer:
       serializedVersion: 2
       m_Bits: 256
+  rb: {fileID: 0}
   fallSpeed: 0
   isGroundEnter: 0
   sideCollision: 0
