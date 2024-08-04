@@ -1,4 +1,4 @@
 {
-  "key": "alt+c",
+  "key": "ctrl+alt+c",
   "command": "settings.cycle.copilot"
 }

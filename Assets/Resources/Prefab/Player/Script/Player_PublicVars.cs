@@ -4,11 +4,10 @@ using UnityEngine;
 
 namespace PlayerCtrl
 {
-    [System.Serializable]                       // 클래스 내부의 값들을 인스펙터 창에 노출 [public 변수만]
-    public class PlayerVars           // 인스턴스화 하여 객체 참조를 위한 클래스
+    [System.Serializable]                   // 클래스 내부의 값들을 인스펙터 창에 노출 [public 변수만]
+    public class PlayerVars                 // 인스턴스화 하여 객체 참조를 위한 클래스
     {
-        
-        [Header("Layer Value")]                // *중요* 레이어 값 [인스펙터에서 할당된 값이 참조됨]
+        [Header("Layer Value")]                 // *중요* 레이어 값 [인스펙터에서 할당된 값이 참조됨]
         public LayerMask usedGroundLayer;               // 땅의 레이어 index
         public LayerMask sideGroundLayer;               // 옆 블록의 레이어 index
         public LayerMask backGroundLayer;               // 뒷 배경의 레이어 index

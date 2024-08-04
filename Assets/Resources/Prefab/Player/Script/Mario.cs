@@ -38,7 +38,7 @@ public class Mario : MonoBehaviour
         mario.rb.sleepMode = RigidbodySleepMode2D.StartAwake;    // 시작시 깨어있음
         mario.rb.interpolation = RigidbodyInterpolation2D.Interpolate;    // 보간
 
-        mario.rb.velocity = Vector2.zero;    // 초기 속도 초기화
+        mario.rb.velocity = Vector3.zero;    // 초기 속도 초기화
     }
 
     void FixedUpdate()                      // void FixedUpdate
