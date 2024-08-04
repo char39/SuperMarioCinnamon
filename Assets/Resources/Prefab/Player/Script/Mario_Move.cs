@@ -4,66 +4,172 @@ using UnityEngine;
 
 public class Mario_Move : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public LayerMask groundLayer;
-    public Vector2 groundCheckSize = new Vector2(0.5f, 0.1f);
-    public Transform groundCheck;
+    public float moveSpeed = 13f;                               // 이동 속도
+    public LayerMask groundLayer;                               // 땅 레이어
+    public Vector2 groundCheckSize = new Vector2(0.7f, 0.1f);   // groundCheck의 박스 크기
+    public Transform groundCheck;                               // 땅을 체크할 위치
 
-    [HideInInspector]
-    public Vector2 velocity; // 속도 벡터를 공개 변수로 설정
+    [HideInInspector]               // 인스펙터 창에 노출되지 않음
+    public Vector2 velocity;            // 속도 벡터를 공개 변수로 설정
 
-    private Rigidbody2D rb;
-    private bool isGrounded;
-    private float originalGravityScale;
+    public Rigidbody2D rb;             // Rigidbody2D 컴포넌트를 저장할 변수
+    public bool isGrounded;            // 땅에 닿았는지 판별할 변수
+    public float originalGravityScale; // 원래 중력 스케일을 저장할 변수
+    public bool ignoreGroundCheck = false; // 땅 체크 무시 플래그
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();       // Rigidbody2D 컴포넌트 할당
         originalGravityScale = rb.gravityScale; // 원래 중력 스케일 저장
     }
 
     void FixedUpdate()
     {
-        // 좌우 입력을 감지
+        //Jump();                                         // 점프
+        MoveLeftRight();                                // 좌우 이동
+    }
+
+    void Update()
+    {
+        Jump();                                         // 점프
+    }
+
+    private void MoveLeftRight()                        // 좌우 이동
+    {
         float moveX = Input.GetAxisRaw("Horizontal");
+        Vector2 newVelocity = new Vector2(moveX * moveSpeed, rb.velocity.y);    // 새로운 속도
+        rb.velocity = newVelocity;                                              // 새로운 속도 적용
 
-        // 새로운 속도 설정
-        Vector2 newVelocity = new Vector2(moveX * moveSpeed, rb.velocity.y);
 
-        // 속도를 업데이트
-        rb.velocity = newVelocity;
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer);  // 땅에 닿았는지 판별
 
-        // 바닥에 닿았는지 확인
-        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer);
 
-        // 바닥에 닿았을 때와 떠났을 때 중력 스케일 및 속도를 조정
-        if (isGrounded)
+        if (isGrounded && !ignoreGroundCheck)                                 // 땅에 닿았을 때
         {
-            rb.gravityScale = 0f;
-
-            // y 속도를 0으로 설정하여 이동 멈추기
-            rb.velocity = new Vector2(rb.velocity.x, 0f);
-
-            // y좌표를 정수로 고정
-            Vector3 position = transform.position;
-            position.y = Mathf.Round(position.y);
-            transform.position = position;
+            rb.gravityScale = 0f;                           // 중력 스케일 0으로 설정
+            rb.velocity = new Vector2(rb.velocity.x, 0f);   // y축 속도 0으로 설정
+            Vector3 position = transform.position;          // 현재 위치 저장
+            position.y = Mathf.Round(position.y);           // y축 위치 반올림
+            transform.position = position;                  // 위치 적용
         }
-        else
-        {
-            rb.gravityScale = originalGravityScale;
-        }
+        else                                            // 땅에 닿지 않았을 때
+            rb.gravityScale = originalGravityScale;         // 중력 스케일 원래대로 설정
 
-        // 현재 속도를 공개 변수에 저장
-        velocity = rb.velocity;
+        velocity = rb.velocity;                         // 속도 벡터 저장
+    }
+
+    void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;             // 플레이 중이 아닐 때는 실행하지 않음
+
+        Gizmos.color = Color.green;                                                     // 색상 설정
+        Gizmos.DrawLine(transform.position, transform.position + (Vector3)velocity);    // 속도 벡터 그리기
     }
 
     void OnDrawGizmosSelected()
     {
-        if (groundCheck == null)
-            return;
+        if (groundCheck == null) return;                // groundCheck가 없을 때는 실행하지 않음
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);
+        Gizmos.color = Color.red;                                                       // 색상 설정
+        Gizmos.DrawWireCube(groundCheck.position, groundCheckSize);                     // groundCheck의 박스 그리기
     }
+
+    void Jump()                                         // 점프
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)    // 스페이스바를 누르고 땅에 닿았을 때
+        {
+            ignoreGroundCheck = true;                         // 땅 체크 무시 플래그 설정
+            rb.velocity = new Vector2(rb.velocity.x, 20f);    // y축 속도 설정 (점프 벡터)
+            StartCoroutine(ResetGroundCheck());               // 땅 체크를 다시 활성화하는 코루틴 시작
+        }
+        else if (Input.GetKeyUp(KeyCode.Space) && rb.velocity.y > 0)  // 스페이스바를 떼고 y축 속도가 양수일 때
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);  // y축 속도를 반으로 줄임
+        }   
+    }
+    IEnumerator ResetGroundCheck()
+    {
+        yield return new WaitForSeconds(0.1f);                // 0.1초 대기
+        ignoreGroundCheck = false;                            // 땅 체크 무시 플래그 해제
+    }
+
 }
+
+
+
+
+
+/*
+ // Public variables for tuning in the Unity Inspector
+    public float moveSpeed = 5f;
+    public float jumpForce = 10f;
+    public float wallJumpForce = 10f;
+    public LayerMask groundLayer;
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.2f;
+    public Transform wallCheck;
+    public float wallCheckDistance = 0.5f;
+    public Vector2 velocity;
+
+    public Rigidbody2D rb;
+    public bool isGrounded;
+    public bool isTouchingWall;
+    public bool canWallJump;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Update()
+    {
+        // Handle movement
+        float moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+
+        // Check if grounded
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+        // Check if touching wall
+        isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, groundLayer) ||
+                         Physics2D.Raycast(wallCheck.position, -transform.right, wallCheckDistance, groundLayer);
+
+        // Handle jumping
+        if (isGrounded && Input.GetButtonDown("Jump"))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        }
+
+        // Handle wall jumping
+        if (isTouchingWall && !isGrounded && Input.GetButtonDown("Jump"))
+        {
+            canWallJump = true;
+            Invoke("ResetWallJump", 0.2f); // Allow wall jump for a short duration
+        }
+
+        if (canWallJump && Input.GetButtonDown("Jump"))
+        {
+            rb.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * wallJumpForce, jumpForce);
+            canWallJump = false;
+        }
+        velocity = rb.velocity;
+    }
+
+    void ResetWallJump()
+    {
+        canWallJump = false;
+    }
+
+    void OnDrawGizmos()
+    {
+        // Draw ground check radius
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+
+        // Draw wall check ray
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(wallCheck.position, wallCheck.position + transform.right * wallCheckDistance);
+        Gizmos.DrawLine(wallCheck.position, wallCheck.position - transform.right * wallCheckDistance);
+    }
+
+*/
