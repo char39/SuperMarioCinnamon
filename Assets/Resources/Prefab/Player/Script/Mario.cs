@@ -5,10 +5,10 @@ using PlayerCtrl;
 
 public class Mario : MonoBehaviour
 {
-    public PlayerVars mario;
-    public Mario(PlayerVars playerVars) { mario = playerVars; }   // 생성자 (mario 변수 초기화)
+    public PlayerVars mario;                                    // PlayerVars 클래스 참조
+    public Mario(PlayerVars playerVars) { mario = playerVars; } // 생성자 (mario 변수 초기화)
 
-    [Header("Vars Value [영향 X]")]              // 수치 바꿔도 전~~~혀 관계없음 [인스펙터 전용]
+    [Header("Vars Value [영향 X]")]                 // 수치 바꿔도 전~~~혀 관계없음 [인스펙터 전용]
     public Rigidbody2D rb;
     public Transform tr;
     
@@ -55,18 +55,6 @@ public class Mario : MonoBehaviour
     {
         rb = mario.rb;
         tr = mario.tr;
-    }
-
-    public void Move()
-    {
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
-
-        }
     }
 
 
