@@ -7,57 +7,36 @@ namespace MarioCtrl
 {
     public class Mario : MonoBehaviour
     {
+        public static Mario instance;                           // Mario 클래스의 인스턴스
         public PlayerVars mario;                                    // PlayerVars 클래스 참조
         public Mario(PlayerVars playerVars) { mario = playerVars; } // 생성자 (mario 변수 초기화)
+
+        [Header("Vars Setting [영향 O]")]               // *중요*
+        public LayerMask blockLayer;
 
         [Header("Vars Value [영향 X]")]                 // 수치 바꿔도 전~~~혀 관계없음 [인스펙터 전용]
         public Vector2 velocity;
         public Rigidbody2D rb;
         public Transform tr;
 
-        void Start()                            // void Start
+        void Awake()
         {
-            StartComponents();
-            StartVars();
-            StartRigidBody();
+            instance = this;
         }
 
-        private void StartComponents()      // 컴포넌트 값 초기화
+        void Start()                        // void Start
+        {
+            StartComponents();
+            StartRigidBody();
+            StartVars();
+        }
+
+        private void StartComponents()          // 컴포넌트 값 초기화
         {
             mario.rb = GetComponent<Rigidbody2D>();
             mario.tr = GetComponent<Transform>();
         }
-        private void StartVars()            // 변수 초기화
-        {
-            mario.blockCheckSize = new Vector2(0.7f, 0.1f);         // Vector2
-            mario.blockLeftCheckSize = new Vector2(0.1f, 0.9f);     // Vector2
-            mario.blockRightCheckSize = new Vector2(0.1f, 0.9f);    // Vector2
-            mario.blockCheck = mario.tr.GetChild(0);                // Transform
-            mario.blockLeftCheck = mario.tr.GetChild(1);            // Transform
-            mario.blockRightCheck = mario.tr.GetChild(2);           // Transform
-            mario.isBlockTouch = false;                             // bool
-            mario.isSideTouch = false;                              // bool
-            mario.SideBlockCheck = 0;                               // int
-            mario.ignoreBlockCheck = false;                         // bool
-            mario.ignoreSideCheck = false;                          // bool
-
-            mario.originalGravityScale = mario.rb.gravityScale;      // float
-
-            mario.moveLeft = -1.0f;                                  // float
-            mario.moveRight = 1.0f;                                  // float
-
-            mario.canJump = false;                                   // bool
-            mario.isJump = false;                                    // bool
-            mario.isCrouchJump = false;                              // bool
-            mario.jumpCount = 0;                                     // int
-            mario.jumpForce = 10.0f;                                 // float
-
-            mario.canMove = true;                                    // bool
-            mario.isMove = false;                                    // bool
-            mario.moveSpeed = 8.0f;                                  // float
-            mario.maxMoveSpeed = 10.0f;                              // float
-        }
-        private void StartRigidBody()       // RigidBody 초기화
+        private void StartRigidBody()           // RigidBody 초기화
         {
             mario.rb.bodyType = RigidbodyType2D.Dynamic;    // 물리 효과
             mario.rb.useAutoMass = false;    // 질량 자동 계산
@@ -72,24 +51,66 @@ namespace MarioCtrl
 
             mario.rb.velocity = Vector3.zero;    // 초기 속도 초기화
         }
+        private void StartVars()                // 변수 초기화
+        {
+            mario.blockLayer = blockLayer;                          // LayerMask
 
-        void FixedUpdate()                      // void FixedUpdate
+            mario.blockCheckSize = new Vector2(0.7f, 0.1f);         // Vector2
+            mario.blockLeftCheckSize = new Vector2(0.1f, 0.9f);     // Vector2
+            mario.blockRightCheckSize = new Vector2(0.1f, 0.9f);    // Vector2
+            mario.blockCheck = mario.tr.GetChild(0);                // Transform
+            mario.blockLeftCheck = mario.tr.GetChild(1);            // Transform
+            mario.blockRightCheck = mario.tr.GetChild(2);           // Transform
+            mario.isBlockTouch = false;                             // bool
+            mario.isSideTouch = false;                              // bool
+            mario.SideBlockCheck = 0;                               // int
+            mario.ignoreBlockCheck = false;                         // bool
+
+            mario.originalGravityScale = mario.rb.gravityScale;      // float
+
+            mario.moveLeft = -1.0f;                                  // float
+            mario.moveRight = 1.0f;                                  // float
+
+            mario.canJump = false;                                   // bool
+            mario.isJump = false;                                    // bool
+            mario.isCrouchJump = false;                              // bool
+            mario.jumpCount = 0;                                     // int
+            mario.jumpForce = 10.0f;                                 // float
+
+            mario.canMove = true;                                    // bool
+            mario.isMove = false;                                    // bool
+            mario.isMoveLeft = false;                                // bool
+            mario.isMoveRight = false;                               // bool
+            mario.moveSpeed = 8.0f;                                  // float
+            mario.maxMoveSpeed = 10.0f;                              // float
+        }
+
+        void FixedUpdate()                  // void FixedUpdate
         {
 
         }
 
-        void Update()                           // void Update
+        void Update()                       // void Update
         {
             InspectorUpdate();
         }
 
-        private void InspectorUpdate()      // 인스펙터에 값 출력용
+        private void InspectorUpdate()          // 인스펙터에 값 출력용
         {
             rb = mario.rb;
             tr = mario.tr;
             velocity = mario.rb.velocity;
         }
 
+        void OnDrawGizmos()                 // 에디터 상에서만 실행되는 함수. 캐릭터의 실시간 벡터 그리기
+        {
+            PlayerMove.DrawVectorGizmos(mario.tr, mario.rb.velocity);
+        }
+
+        void OnDrawGizmosSelected()         // 에디터 상에서만 실행되는 함수. 블록 판별을 위한 체크 박스 그리기
+        {
+            PlayerMove.DrawCollisionGizmos(mario.blockCheck, mario.blockCheckSize, mario.blockLeftCheck, mario.blockLeftCheckSize, mario.blockRightCheck, mario.blockRightCheckSize);
+        }
 
 
     }

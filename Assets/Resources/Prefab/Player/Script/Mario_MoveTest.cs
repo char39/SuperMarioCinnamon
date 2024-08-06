@@ -21,7 +21,7 @@ public class Mario_MoveTest : MonoBehaviour
     public int isSideCheck = 0;        // 벽에 닿았는지 판별할 변수.    [왼쪽 : -1, 닿지 않음 : 0, 오른쪽 : 1]
     public float originalGravityScale;   // 원래 중력 스케일을 저장할 변수
     public bool ignoreGroundCheck = false;  // 땅 체크 무시 플래그
-    public bool ignoreSideCheck = false;    // 벽 체크 무시 플래그
+    //public bool ignoreSideCheck = false;    // 벽 체크 무시 플래그
 
     void Start()
     {
@@ -127,82 +127,3 @@ public class Mario_MoveTest : MonoBehaviour
     }
 
 }
-
-
-
-
-
-/*
- // Public variables for tuning in the Unity Inspector
-    public float moveSpeed = 5f;
-    public float jumpForce = 10f;
-    public float wallJumpForce = 10f;
-    public LayerMask groundLayer;
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
-    public Transform wallCheck;
-    public float wallCheckDistance = 0.5f;
-    public Vector2 velocity;
-
-    public Rigidbody2D rb;
-    public bool isGrounded;
-    public bool isTouchingWall;
-    public bool canWallJump;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
-    void Update()
-    {
-        // Handle movement
-        float moveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
-
-        // Check if grounded
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        // Check if touching wall
-        isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, groundLayer) ||
-                         Physics2D.Raycast(wallCheck.position, -transform.right, wallCheckDistance, groundLayer);
-
-        // Handle jumping
-        if (isGrounded && Input.GetButtonDown("Jump"))
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        }
-
-        // Handle wall jumping
-        if (isTouchingWall && !isGrounded && Input.GetButtonDown("Jump"))
-        {
-            canWallJump = true;
-            Invoke("ResetWallJump", 0.2f); // Allow wall jump for a short duration
-        }
-
-        if (canWallJump && Input.GetButtonDown("Jump"))
-        {
-            rb.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * wallJumpForce, jumpForce);
-            canWallJump = false;
-        }
-        velocity = rb.velocity;
-    }
-
-    void ResetWallJump()
-    {
-        canWallJump = false;
-    }
-
-    void OnDrawGizmos()
-    {
-        // Draw ground check radius
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-
-        // Draw wall check ray
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(wallCheck.position, wallCheck.position + transform.right * wallCheckDistance);
-        Gizmos.DrawLine(wallCheck.position, wallCheck.position - transform.right * wallCheckDistance);
-    }
-
-*/

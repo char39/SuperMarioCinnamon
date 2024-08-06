@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using MarioCtrl;
 
 [CustomEditor(typeof(Mario))]                          // Mario_Move 스크립트를 인스펙터 창에 표시
 public class PlayerMovementRigidbodyEditor : Editor
