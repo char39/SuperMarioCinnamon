@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 4314354060181820969}
   - component: {fileID: 2132824502078325748}
   - component: {fileID: 6300547923316606100}
-  - component: {fileID: 5173167043277083266}
   m_Layer: 0
   m_Name: Mario_16
   m_TagString: Player
@@ -215,51 +214,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1388561026540318582}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 661b56f9a5c62462aaa82866b0405408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mario:
-    usedGroundLayer:
+    blockLayer:
       serializedVersion: 2
-      m_Bits: 0
-    sideGroundLayer:
-      serializedVersion: 2
-      m_Bits: 0
-    backGroundLayer:
-      serializedVersion: 2
-      m_Bits: 0
-  rb: {fileID: 0}
-  tr: {fileID: 0}
---- !u!114 &5173167043277083266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1388561026540318582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a055d216272824b63b2da1057b5617a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 13
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  groundCheckSize: {x: 0.7, y: 0.1}
-  sideLeftCheckSize: {x: 0.1, y: 0.7}
-  sideRightCheckSize: {x: 0.1, y: 0.7}
-  groundCheck: {fileID: 2735121521906308857}
-  sideLeftCheck: {fileID: 1812336289335376806}
-  sideRightCheck: {fileID: 7820652995508925194}
+      m_Bits: 2048
   velocity: {x: 0, y: 0}
   rb: {fileID: 0}
-  isGrounded: 0
-  isSideCheck: 0
-  originalGravityScale: 0
-  ignoreGroundCheck: 0
+  tr: {fileID: 0}
 --- !u!1 &2940537921809714042
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,7 +282,7 @@ Transform:
   m_GameObject: {fileID: 5784135340246737030}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.36, y: 0.46, z: 0}
+  m_LocalPosition: {x: 0.37, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -347,7 +313,7 @@ Transform:
   m_GameObject: {fileID: 8488387064941721427}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.36, y: 0.46, z: 0}
+  m_LocalPosition: {x: -0.37, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

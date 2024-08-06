@@ -2071,21 +2071,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mario_16
       objectReference: {fileID: 0}
-    - target: {fileID: 1812336289335376806, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.37
-      objectReference: {fileID: 0}
-    - target: {fileID: 1812336289335376806, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 2564490682518814008, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.391
+      value: 2.54
       objectReference: {fileID: 0}
     - target: {fileID: 2564490682518814008, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 3.64
       objectReference: {fileID: 0}
     - target: {fileID: 2564490682518814008, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2119,29 +2111,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5173167043277083266, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: sideLayer.m_Bits
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 5173167043277083266, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: groundLayer.m_Bits
+    - target: {fileID: 6300547923316606100, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
+      propertyPath: mario.blockLayer.m_Bits
       value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 5173167043277083266, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: sideLeftCheckSize.y
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 5173167043277083266, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: sideRightCheckSize.y
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 7820652995508925194, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.37
-      objectReference: {fileID: 0}
-    - target: {fileID: 7820652995508925194, guid: a6765107cfe2044f59ddef7462199e35, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

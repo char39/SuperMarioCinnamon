@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(Mario_Move))]                          // Mario_Move 스크립트를 인스펙터 창에 표시
+[CustomEditor(typeof(Mario))]                          // Mario_Move 스크립트를 인스펙터 창에 표시
 public class PlayerMovementRigidbodyEditor : Editor
 {
     private const float updateInterval = 0.05f;                                     // 갱신 주기 (초 단위)
@@ -31,7 +31,7 @@ public class PlayerMovementRigidbodyEditor : Editor
     {
         DrawDefaultInspector();                                                     // 기본 인스펙터 창 표시
 
-        Mario_Move playerMovement = (Mario_Move)target;                             // Mario_Move 스크립트를 가져옴
+        Mario playerMovement = (Mario)target;                             // Mario_Move 스크립트를 가져옴
 
         GUILayout.Space(10);                                                        // 공백 추가
         GUILayout.Label("Velocity", EditorStyles.boldLabel);                        // "Velocity" 레이블 표시
