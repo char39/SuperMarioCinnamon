@@ -4,12 +4,25 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    /// <summary>
+    /// 오브젝트의 실시간 벡터를 표현함.
+    /// </summary>
+    /// <param name="tr"></param>
+    /// <param name="velocity"></param>
     public static void DrawVectorGizmos(Transform tr, Vector2 velocity)
     {
         Gizmos.color = Color.green;
         Gizmos.DrawLine(tr.position, tr.position + (Vector3)velocity);
     }
-
+    /// <summary>
+    /// 블록 판별을 위한 박스 크기를 표현함.
+    /// </summary>
+    /// <param name="blockCheck"></param>
+    /// <param name="blockCheckSize"></param>
+    /// <param name="blockLeftCheck"></param>
+    /// <param name="blockLeftCheckSize"></param>
+    /// <param name="blockRightCheck"></param>
+    /// <param name="blockRightCheckSize"></param>
     public static void DrawCollisionGizmos(Transform blockCheck, Vector2 blockCheckSize, Transform blockLeftCheck, Vector2 blockLeftCheckSize, Transform blockRightCheck, Vector2 blockRightCheckSize)
     {
         if (blockCheck == null) return;
@@ -22,12 +35,27 @@ public class PlayerMove : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(blockRightCheck.position, blockRightCheckSize);
     }
-
+    /// <summary>
+    /// 바닥에 닿았는지 판별함.
+    /// </summary>
+    /// <param name="blockCheck"></param>
+    /// <param name="blockCheckSize"></param>
+    /// <param name="blockLayer"></param>
+    /// <returns></returns>
     public static bool BlockCheck(Transform blockCheck, Vector2 blockCheckSize, LayerMask blockLayer)
     {
         return Physics2D.OverlapBox(blockCheck.position, blockCheckSize, 0f, blockLayer);               // 바닥에 닿았는지 판별
     }
-
+    /// <summary>
+    /// 왼쪽이나 오른쪽에 닿았는지 판별함.
+    /// </summary>
+    /// <param name="blockLeftCheck"></param>
+    /// <param name="blockRightCheck"></param>
+    /// <param name="blockLeftCheckSize"></param>
+    /// <param name="blockRightCheckSize"></param>
+    /// <param name="blockLayer"></param>
+    /// <param name="SideBlockCheck"></param>
+    /// <returns></returns>
     public static bool SideCheck(Transform blockLeftCheck, Transform blockRightCheck, Vector2 blockLeftCheckSize, Vector2 blockRightCheckSize, LayerMask blockLayer, out int SideBlockCheck)
     {
         if (Physics2D.OverlapBox(blockLeftCheck.position, blockLeftCheckSize, 0f, blockLayer))          // 왼쪽에 닿았는지 판별
@@ -38,7 +66,15 @@ public class PlayerMove : MonoBehaviour
             SideBlockCheck = 0;
         return SideBlockCheck != 0;                             // 왼쪽이나 오른쪽에 닿았는지 판별
     }
-
+    /// <summary>
+    /// 바닥에 닿았을 때 위치를 고정함.
+    /// </summary>
+    /// <param name="rb"></param>
+    /// <param name="tr"></param>
+    /// <param name="isBlockTouch"></param>
+    /// <param name="ignoreBlockCheck"></param>
+    /// <param name="isJump"></param>
+    /// <param name="originalGravityScale"></param>
     public static void BlockPositionLock(ref Rigidbody2D rb, ref Transform tr, bool isBlockTouch, bool ignoreBlockCheck, ref bool isJump, float originalGravityScale)
     {
         if (isBlockTouch && !ignoreBlockCheck)          // 땅에 닿았을 때
@@ -53,7 +89,11 @@ public class PlayerMove : MonoBehaviour
         else                                            // 땅에 닿지 않았을 때
             rb.gravityScale = originalGravityScale;             // 중력 스케일 원래대로 설정
     }
-
+    /// <summary>
+    /// 옆에 닿았을 때 위치를 고정함.
+    /// </summary>
+    /// <param name="tr"></param>
+    /// <param name="SideBlockCheck"></param>
     public static void SidePositionLock(ref Transform tr, int SideBlockCheck)
     {
         if (SideBlockCheck == 1 || SideBlockCheck == -1)
@@ -66,7 +106,14 @@ public class PlayerMove : MonoBehaviour
             tr.position = position;                                             // 위치 적용
         }
     }
-
+    /// <summary>
+    /// 플레이어 이동을 처리함.
+    /// </summary>
+    /// <param name="rb"></param>
+    /// <param name="SideBlockCheck"></param>
+    /// <param name="moveSpeed"></param>
+    /// <param name="isMoveLeft"></param>
+    /// <param name="isMoveRight"></param>
     public static void MoveX(ref Rigidbody2D rb, int SideBlockCheck, float moveSpeed, out bool isMoveLeft, out bool isMoveRight)
     {
         float moveX = Input.GetAxisRaw("Horizontal");
@@ -83,7 +130,11 @@ public class PlayerMove : MonoBehaviour
             isMoveRight = false;                                                    // 오른쪽으로 이동 중인지 판별
         }
     }
-
+    /// <summary>
+    /// 바닥에 닿았는지 판별하는 함수를 무시함.
+    /// </summary>
+    /// <param name="rb"></param>
+    /// <param name="ignoreBlockCheck"></param>
     public static void IgnoreBlockPositionLock(Rigidbody2D rb, ref bool ignoreBlockCheck)
     {
         if (rb.velocity.y > 0)                              // 점프 중일 때 (y축 속도가 양수일 때)
@@ -91,7 +142,14 @@ public class PlayerMove : MonoBehaviour
         else                                                // 점프 중이 아닐 때 (y축 속도가 음수일 때)
             ignoreBlockCheck = false;                           // 블록 체크 허용
     }
-
+    /// <summary>
+    /// 여러 점프 상태를 판별함.
+    /// </summary>
+    /// <param name="isBlockTouch"></param>
+    /// <param name="isJump"></param>
+    /// <param name="isCrouchJump"></param>
+    /// <param name="jumpCount"></param>
+    /// <param name="canJump"></param>
     public static void JumpCheck(bool isBlockTouch, ref bool isJump, ref bool isCrouchJump, ref int jumpCount, ref bool canJump)
     {
         if (isBlockTouch && !isJump && !isCrouchJump)                           // 땅에 닿고 점프 중이 아닐 때
@@ -103,7 +161,14 @@ public class PlayerMove : MonoBehaviour
         else if (jumpCount == 0)                                                // 점프 가능 횟수가 0일 때
             canJump = false;                                                        // 점프 불가능
     }
-
+    /// <summary>
+    /// 플레이어 점프를 처리함.
+    /// </summary>
+    /// <param name="rb"></param>
+    /// <param name="isJump"></param>
+    /// <param name="canJump"></param>
+    /// <param name="jumpForce"></param>
+    /// <param name="jumpCount"></param>
     public static void Jump(ref Rigidbody2D rb, ref bool isJump, bool canJump, float jumpForce, ref int jumpCount)
     {
         if (Input.GetKeyDown(KeyCode.Space) && canJump)                         // 스페이스바를 누르고 점프 가능할 때

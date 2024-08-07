@@ -72,7 +72,7 @@ namespace MarioCtrl
         {
             mario.blockLayer = blockLayer;                          // LayerMask
 
-            mario.blockCheckSize = new Vector2(0.75f, 0.1f);        // Vector2
+            mario.blockCheckSize = new Vector2(0.7f, 0.1f);        // Vector2
             mario.blockLeftCheckSize = new Vector2(0.1f, 0.9f);     // Vector2
             mario.blockRightCheckSize = new Vector2(0.1f, 0.9f);    // Vector2
             mario.blockCheck = mario.tr.GetChild(0);                // Transform
@@ -128,7 +128,6 @@ namespace MarioCtrl
             PlayerMove.JumpCheck(mario.isBlockTouch, ref mario.isJump, ref mario.isCrouchJump, ref mario.jumpCount, ref mario.canJump);
             PlayerMove.Jump(ref mario.rb, ref mario.isJump, mario.canJump, mario.jumpForce, ref mario.jumpCount);
         }
-
         private void InspectorUpdate()          // 인스펙터에 값 출력용
         {
             rb = mario.rb;
