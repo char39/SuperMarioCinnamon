@@ -40,6 +40,7 @@ namespace PlayerCtrl
         internal bool isMove;                           // 이동 중인지 판별
         internal bool isMoveLeft;                       // 왼쪽으로 이동 중인지 판별
         internal bool isMoveRight;                      // 오른쪽으로 이동 중인지 판별
+        internal bool isRun;                            // 달리기 중인지 판별
         internal float moveSpeed;                       // 이동 속도
         internal float maxMoveSpeed;                    // 최대 이동 속도
 

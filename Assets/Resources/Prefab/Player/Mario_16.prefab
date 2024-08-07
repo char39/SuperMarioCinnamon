@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2564490682518814008}
   - component: {fileID: 8893826377105751923}
-  - component: {fileID: 5175289477612775572}
-  - component: {fileID: 4903990457838942914}
   - component: {fileID: 4314354060181820969}
   - component: {fileID: 2132824502078325748}
   - component: {fileID: 6300547923316606100}
@@ -92,49 +90,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!111 &5175289477612775572
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1388561026540318582}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 5e6114f2ed78742da9b2cf651d9fdd96, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 5e6114f2ed78742da9b2cf651d9fdd96, type: 2}
-  - {fileID: 7400000, guid: cff550eba0a654b408dfa0c59bf5cc44, type: 2}
-  - {fileID: 7400000, guid: 603466c71943341f2b93f3845d5cf5e3, type: 2}
-  - {fileID: 7400000, guid: e6492d090a4c242fda97358802c85d77, type: 2}
-  - {fileID: 7400000, guid: c967888c95a9f4e758307d6d2f783985, type: 2}
-  - {fileID: 7400000, guid: 6e3518662ad634eba90e9a5aabad6103, type: 2}
-  - {fileID: 7400000, guid: d6a1a7a0254304a4289b9c2d55516603, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
---- !u!95 &4903990457838942914
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1388561026540318582}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!61 &4314354060181820969
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -178,7 +133,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.67, y: 0.92}
+  m_Size: {x: 0.65, y: 0.92}
   m_EdgeRadius: 0.03
 --- !u!50 &2132824502078325748
 Rigidbody2D:
@@ -195,7 +150,7 @@ Rigidbody2D:
   m_Mass: 50
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -219,13 +174,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 661b56f9a5c62462aaa82866b0405408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mario:
-    blockLayer:
-      serializedVersion: 2
-      m_Bits: 2048
+  blockLayer:
+    serializedVersion: 2
+    m_Bits: 2048
   velocity: {x: 0, y: 0}
   rb: {fileID: 0}
   tr: {fileID: 0}
+  isBlockTouch: 0
+  isSideTouch: 0
+  SideBlockCheck: 0
+  ignoreBlockCheck: 0
+  originalGravityScale: 0
+  canJump: 0
+  isJump: 0
+  isCrouchJump: 0
+  jumpCount: 0
+  jumpForce: 0
+  canMove: 0
+  isMove: 0
+  isMoveLeft: 0
+  isMoveRight: 0
+  moveSpeed: 0
+  maxMoveSpeed: 0
 --- !u!1 &2940537921809714042
 GameObject:
   m_ObjectHideFlags: 0

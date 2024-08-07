@@ -23,6 +23,7 @@ namespace MarioCtrl
         public bool isSideTouch;
         public int SideBlockCheck;
         public bool ignoreBlockCheck;
+        public float originalGravityScale;
         public bool canJump;
         public bool isJump;
         public bool isCrouchJump;
@@ -36,7 +37,7 @@ namespace MarioCtrl
         public float maxMoveSpeed;
         #endregion //////////////////////////////////////////////////////////////
 
-        void Awake()
+        void Awake()                        // void Awake
         {
             instance = this;
         }
@@ -46,6 +47,17 @@ namespace MarioCtrl
             StartComponents();
             StartRigidBody();
             StartVars();
+        }
+
+        void FixedUpdate()                  // void FixedUpdate
+        {
+            PlayerMoveUpdate();
+        }
+
+        void Update()                       // void Update
+        {
+            PlayerJumpUpdate();
+            InspectorUpdate();
         }
 
         private void StartComponents()          // 컴포넌트 값 초기화
@@ -60,7 +72,7 @@ namespace MarioCtrl
             mario.rb.mass = 1.0f;    // 질량
             mario.rb.drag = 0.0f;    // 공기 저항
             mario.rb.angularDrag = 0.05f;    // 회전 저항
-            mario.rb.gravityScale = 3.0f;    // 중력 적용
+            mario.rb.gravityScale = 6.0f;    // 중력 적용
             mario.rb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;    // 회전 제한
             mario.rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;    // 충돌 감지
             mario.rb.sleepMode = RigidbodySleepMode2D.StartAwake;    // 시작시 깨어있음
@@ -72,7 +84,7 @@ namespace MarioCtrl
         {
             mario.blockLayer = blockLayer;                          // LayerMask
 
-            mario.blockCheckSize = new Vector2(0.7f, 0.1f);        // Vector2
+            mario.blockCheckSize = new Vector2(0.7f, 0.1f);         // Vector2
             mario.blockLeftCheckSize = new Vector2(0.1f, 0.9f);     // Vector2
             mario.blockRightCheckSize = new Vector2(0.1f, 0.9f);    // Vector2
             mario.blockCheck = mario.tr.GetChild(0);                // Transform
@@ -92,19 +104,15 @@ namespace MarioCtrl
             mario.isJump = false;                                    // bool
             mario.isCrouchJump = false;                              // bool
             mario.jumpCount = 0;                                     // int
-            mario.jumpForce = 20.0f;                                 // float
+            mario.jumpForce = 22.0f;                                 // float
 
             mario.canMove = true;                                    // bool
             mario.isMove = false;                                    // bool
             mario.isMoveLeft = false;                                // bool
             mario.isMoveRight = false;                               // bool
-            mario.moveSpeed = 8.0f;                                  // float
-            mario.maxMoveSpeed = 10.0f;                              // float
-        }
-
-        void FixedUpdate()                  // void FixedUpdate
-        {
-            PlayerMoveUpdate();
+            mario.isRun = false;                                     // bool
+            mario.moveSpeed = 12.0f;                                 // float
+            mario.maxMoveSpeed = 30.0f;                              // float
         }
 
         private void PlayerMoveUpdate()         // 플레이어 이동 업데이트
@@ -114,20 +122,16 @@ namespace MarioCtrl
             mario.isSideTouch = PlayerMove.SideCheck(mario.blockLeftCheck, mario.blockRightCheck, mario.blockLeftCheckSize, mario.blockRightCheckSize, mario.blockLayer, out mario.SideBlockCheck);
             PlayerMove.BlockPositionLock(ref mario.rb, ref mario.tr, mario.isBlockTouch, mario.ignoreBlockCheck, ref mario.isJump, mario.originalGravityScale);
             PlayerMove.SidePositionLock(ref mario.tr, mario.SideBlockCheck);
-            PlayerMove.MoveX(ref mario.rb, mario.SideBlockCheck, mario.moveSpeed, out mario.isMoveLeft, out mario.isMoveRight);
+            PlayerMove.Run(ref mario.isRun);
+            PlayerMove.MoveX(ref mario.rb, mario.SideBlockCheck, mario.moveSpeed, out mario.isMoveLeft, out mario.isMoveRight, mario.isRun);
+            PlayerMove.TerminalVelocity(ref mario.rb, mario.maxMoveSpeed, mario.originalGravityScale, isBlockTouch);
         }
-
-        void Update()                       // void Update
-        {
-            PlayerJumpUpdate();
-            InspectorUpdate();
-        }
-
         private void PlayerJumpUpdate()         // 플레이어 점프 업데이트
         {
             PlayerMove.JumpCheck(mario.isBlockTouch, ref mario.isJump, ref mario.isCrouchJump, ref mario.jumpCount, ref mario.canJump);
             PlayerMove.Jump(ref mario.rb, ref mario.isJump, mario.canJump, mario.jumpForce, ref mario.jumpCount);
         }
+
         private void InspectorUpdate()          // 인스펙터에 값 출력용
         {
             rb = mario.rb;
@@ -137,6 +141,7 @@ namespace MarioCtrl
             isSideTouch = mario.isSideTouch;
             SideBlockCheck = mario.SideBlockCheck;
             ignoreBlockCheck = mario.ignoreBlockCheck;
+            originalGravityScale = mario.originalGravityScale;
             canJump = mario.canJump;
             isJump = mario.isJump;
             isCrouchJump = mario.isCrouchJump;
@@ -149,7 +154,6 @@ namespace MarioCtrl
             moveSpeed = mario.moveSpeed;
             maxMoveSpeed = mario.maxMoveSpeed;
         }
-
         private void OnDrawGizmos()                 // 에디터 상에서만 실행되는 함수. 캐릭터의 실시간 벡터 그리기
         {
             if (!Application.isPlaying) return;
