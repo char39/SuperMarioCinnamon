@@ -16,7 +16,6 @@ namespace MarioCtrl
         public LayerMask blockLayer;
 
         [Header("Vars Value [영향 X]")]                 // 수치 바꿔도 전~~~혀 관계없음 [인스펙터 전용]
-        [HideInInspector] public Vector2 velocity;
         public Rigidbody2D rb;
         public Transform tr;
         public bool isBlockTouch;
@@ -35,6 +34,8 @@ namespace MarioCtrl
         public bool isMoveRight;
         public float moveSpeed;
         public float maxMoveSpeed;
+
+        [HideInInspector] public Vector2 velocity;
         #endregion //////////////////////////////////////////////////////////////
 
         void Awake()                        // void Awake
