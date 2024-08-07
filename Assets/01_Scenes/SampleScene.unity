@@ -2244,7 +2244,7 @@ GameObject:
   - component: {fileID: 503918551}
   - component: {fileID: 503918552}
   m_Layer: 9
-  m_Name: MapTile_1_Side
+  m_Name: MapTile_1_Map
   m_TagString: SideGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

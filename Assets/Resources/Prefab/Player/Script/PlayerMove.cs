@@ -80,36 +80,38 @@ public class PlayerMove : MonoBehaviour
             rb.gravityScale = originalGravityScale;             // 중력 스케일 원래대로 설정
     }
     /// <summary> 옆에 닿았을 때 위치를 고정함. </summary>
+    /// <param name="rb"></param>
     /// <param name="tr"></param>
     /// <param name="SideBlockCheck"></param>
-    public static void SidePositionLock(ref Transform tr, int SideBlockCheck)
+    public static void SidePositionLock(ref Rigidbody2D rb, ref Transform tr, int SideBlockCheck, bool ignoreSideCheck)
     {
-        if (SideBlockCheck == 1 || SideBlockCheck == -1)
+        if ((SideBlockCheck == 1 || SideBlockCheck == -1) && !ignoreSideCheck)  // 옆에 닿았을 때
         {
-            float xRoundOff = SideBlockCheck == 1 ? -0.38f : 0.38f;             // 오른쪽에 닿았을 때 : 왼쪽에 닿았을 때
-
-            Vector3 position = tr.position;                                     // 현재 위치 저장
-            position.x = Mathf.Round(position.x);                               // x축 위치 반올림
-            position = new Vector2(position.x + xRoundOff, position.y);         // x축 위치 조정
-            tr.position = position;                                             // 위치 적용
+            float xRoundOff = SideBlockCheck == 1 ? -0.38f : 0.38f;                 // 오른쪽에 닿았을 때 : 왼쪽에 닿았을 때
+            rb.velocity = new Vector2(0f, rb.velocity.y);                           // x축 속도 0으로 설정
+            Vector3 position = tr.position;                                         // 현재 위치 저장
+            position.x = Mathf.Round(position.x);                                   // x축 위치 반올림
+            position = new Vector2(position.x + xRoundOff, position.y);             // x축 위치 조정
+            tr.position = position;                                                 // 위치 적용
         }
     }
-    /// <summary> 플레이어 이동을 처리함. 달리기 중일 때 이동 속도 변경. </summary>
+    /// <summary> 플레이어 이동을 처리함. 달리기 중일 때 이동 속도 변경. [[[아직 완성하지 못함]]] </summary>
     /// <param name="rb"></param>
     /// <param name="SideBlockCheck"></param>
-    /// <param name="moveSpeed"></param>
+    /// <param name="moveForce"></param>
     /// <param name="isMoveLeft"></param>
     /// <param name="isMoveRight"></param>
-    public static void MoveX(ref Rigidbody2D rb, int SideBlockCheck, float moveSpeed, out bool isMoveLeft, out bool isMoveRight, bool isRun)
+    public static void MoveX(ref Rigidbody2D rb, int SideBlockCheck, float moveForce, out bool isMoveLeft, out bool isMoveRight, bool isRun)
     {
         float moveX = Input.GetAxisRaw("Horizontal");
-        float moveXStandard = isRun ? moveX : moveX * 0.5f;                         // 달리기 중일 때 이동 속도 변경
-        Vector2 newVelocity = new Vector2(moveXStandard * moveSpeed, rb.velocity.y);        // 새로운 속도
+        Vector2 targetVelocity = new Vector2(moveX * moveForce, rb.velocity.y);             // 목표 속도
+        Vector2 velocityChange = targetVelocity - rb.velocity;                              // 속도 변화량
+
         if (SideBlockCheck == 0 || (SideBlockCheck == 1 && moveX < 0) || (SideBlockCheck == -1 && moveX > 0))
         {
-            rb.velocity = newVelocity;                                              // 새로운 속도 적용
-            isMoveLeft = moveX < 0;                                                 // 왼쪽으로 이동 중인지 판별
-            isMoveRight = moveX > 0;                                                // 오른쪽으로 이동 중인지 판별
+            rb.AddForce(velocityChange, ForceMode2D.Force);                           // 부드럽게 이동하도록 힘 추가
+            isMoveLeft = moveX < 0;                                                   // 왼쪽으로 이동 중인지 판별
+            isMoveRight = moveX > 0;                                                  // 오른쪽으로 이동 중인지 판별
         }
         else
         {
@@ -135,6 +137,19 @@ public class PlayerMove : MonoBehaviour
             ignoreBlockCheck = true;                            // 블록 체크 무시
         else                                                // 점프 중이 아닐 때 (y축 속도가 음수일 때)
             ignoreBlockCheck = false;                           // 블록 체크 허용
+    }
+    /// <summary> 옆에 닿았는지 판별하는 함수를 무시함. </summary>
+    /// <param name="rb"></param>
+    /// <param name="ignoreSideCheck"></param>
+    /// <param name="SideBlockCheck"></param>
+    /// <param name="isMoveLeft"></param>
+    /// <param name="isMoveRight"></param>
+    public static void IgnoreSidePositionLock(Rigidbody2D rb, ref bool ignoreSideCheck, int SideBlockCheck, bool isMoveLeft, bool isMoveRight)
+    {
+        if ((SideBlockCheck == 1 && isMoveLeft) || (SideBlockCheck == -1 && isMoveRight))   // 오른쪽에 닿았을 때 왼쪽으로 이동 시도 : 왼쪽에 닿았을 때 오른쪽으로 이동 시도
+            ignoreSideCheck = true;                             // 옆면 체크 무시
+        else
+            ignoreSideCheck = false;                            // 옆면 체크 허용
     }
     /// <summary> 여러 점프 상태를 판별함. </summary>
     /// <param name="isBlockTouch"></param>
@@ -182,9 +197,10 @@ public class PlayerMove : MonoBehaviour
     /// <summary> Velocity의 최대치 설정. 종단속도를 처리함. [[[아직 완성하지 못함]]] </summary>
     /// <param name="rb"></param>
     /// <param name="maxMoveSpeed"></param>
+    /// <param name="maxFallSpeed"></param>
     /// <param name="originalGravityScale"></param>
     /// <param name="isBlockTouch"></param>
-    public static void TerminalVelocity(ref Rigidbody2D rb, float maxMoveSpeed, float originalGravityScale, bool isBlockTouch)
+    public static void TerminalVelocity(ref Rigidbody2D rb, float maxMoveSpeed, float maxFallSpeed, float originalGravityScale, bool isBlockTouch, bool isRun)
     {
         bool reverseX = rb.velocity.x > 0 ? true : false;       // x축 속도가 양수일 때 : x축 속도가 음수일 때
         bool reverseY = rb.velocity.y > 0 ? true : false;       // y축 속도가 양수일 때 : y축 속도가 음수일 때
@@ -197,13 +213,11 @@ public class PlayerMove : MonoBehaviour
                 rb.gravityScale = originalGravityScale;             // y축 속도가 음수일 때 중력 스케일 원래대로
         }
 
-        if (Mathf.Abs(rb.velocity.x) > maxMoveSpeed)                                            // x축 속도가 최대 이동 속도보다 클 때
+        if (Mathf.Abs(rb.velocity.x) > maxMoveSpeed)                                            // x축 속도가 최대 이동 속도보다 클 때, 달리고 있지 않을 때
             rb.velocity = new Vector2(reverseX ? maxMoveSpeed : -maxMoveSpeed, rb.velocity.y);      // 최대 이동 속도 제한
-        if (Mathf.Abs(rb.velocity.y) > maxMoveSpeed)                                            // y축 속도가 최대 이동 속도보다 클 때
-        {
-            Vector2 saveVelocity = rb.velocity;
-            rb.velocity = new Vector2(rb.velocity.x, reverseY ? maxMoveSpeed : -maxMoveSpeed);      // 최대 이동 속도 제한
-        }
+
+        if (Mathf.Abs(rb.velocity.y) > maxFallSpeed)                                            // y축 속도가 최대 이동 속도보다 클 때
+            rb.velocity = new Vector2(rb.velocity.x, reverseY ? maxFallSpeed : -maxFallSpeed);      // 최대 이동 속도 제한
 
     }
 
